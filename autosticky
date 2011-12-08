@@ -1,0 +1,25 @@
+#!/bin/sh
+while sleep 2; do
+    wmctrl -lG
+    echo done
+done | while read wid workspace x y _; do
+    if [ "$wid" != 'done' ]; then
+        if [ "$x" -ge 3200 ]; then
+            if eval [ ! "\$set_$wid" ]; then
+                eval set_$wid=$workspace
+                [ "$workspace" != -1 ] && wmctrl -ir "$wid" -b add,sticky
+            fi
+            newtracked="$newtracked $wid"
+        fi
+    else
+        for wid in $oldtracked; do
+            case "$newtracked" in
+            *$wid*) :;;
+            *) eval [ "\$set_$wid" != -1 ] && wmctrl -ir "$wid" -b remove,sticky
+               eval unset set_$wid;;
+            esac
+        done
+        oldtracked="$newtracked"
+        newtracked=
+    fi
+done

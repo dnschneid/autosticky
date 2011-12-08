@@ -1,0 +1,32 @@
+Automatic "sticky" manager for multimonitor workspaces.
+
+Background:
+    I have a three-monitor setup, and on one monitor I generally like to keep
+everything sticky; that is, the window appears regardless of which workspace I
+am currently on.  Not wanting to give up xfwm4 for something like Xmonad that
+reportedly has the feature built-in, I made a quick shell script that runs in
+the background and assigns sticky bits.
+
+Features:
+  - Polls every x seconds (default: 2) for windows
+  - Windows that are now farther right than a threshold will be marked sticky
+  - Windows that were marked sticky that got unmarked (by the user) will not be
+    touched again
+  - Moving the window to the left of the threshold will revert the sticky state
+
+Prerequisites:
+  - wmctrl
+  - A EWMH/NetWM compatible window manager (many are)
+
+Setup:
+ 1. Modify the sleep line to set the amount of time between polls. 2 seconds is
+    probably a good balance between responsiveness and processing.
+ 2. Change "-ge 3200" to match your setup. Set the 3200 to the x-pixel offset
+    and change -ge to -le if you want to make the sticky are to the left. You
+    can also add conditions based on $y if you want vertical location to be a
+    factor.
+
+Usage:
+ 1. Just run autosticky. You'll probably want it to be run on startup.
+ 2. Drag a window past the threshold and you should see it turn sticky.
+ 3. Drag the window back before the threshold and it should revert.
